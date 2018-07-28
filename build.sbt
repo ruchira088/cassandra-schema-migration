@@ -8,7 +8,7 @@ lazy val root = (project in file("."))
     )),
     name := "cassandra-schema-migration",
     libraryDependencies ++= Seq(
-      cassandraDriverCore, quillCassandra, phantomDsl,
+      phantomDsl, scalaReflect,
       jodaTime, scalazCore,
       scalaTest % Test,
       pegdown % Test

@@ -6,7 +6,7 @@ import java.nio.file.{Path, StandardOpenOption}
 
 import scala.concurrent.{ExecutionContext, Future, Promise}
 
-object FileUtils
+object FileReader
 {
   def readFile(path: Path): Future[Array[Byte]] =
   {

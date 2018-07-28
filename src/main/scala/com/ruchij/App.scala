@@ -1,9 +1,8 @@
 package com.ruchij
 
-import com.datastax.driver.core.Cluster
-import com.ruchij.quill.QuillManager
-import io.getquill._
-import io.getquill.context.cassandra.cluster.ClusterBuilder
+import com.outworkers.phantom.connectors.ContactPoints
+import com.ruchij.migration.phantom.PhantomMigrationDao
+import com.ruchij.phantom.PhantomLockManager
 
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -14,13 +13,12 @@ object App
 {
   def main(args: Array[String]): Unit =
   {
-    Cluster.builder()
-      .addContactPoints("")
-      .build()
-      .connectAsync()
-//    implicit val cassandraAsyncContext: CassandraAsyncContext[SnakeCase] =
-//      new CassandraAsyncContext(SnakeCase, "cassandra")
-//
-//    println(Await.result(QuillManager.initialize(), 30 seconds))
+    val cassandraConnection = ContactPoints(List("localhost")).keySpace("migrations")
+    val phantomMigrationDao = new PhantomMigrationDao(cassandraConnection)
+    println(Await.result(phantomMigrationDao.createTable(), 30 seconds))
+
+    println(Await.result(PhantomLockManager.createLockTable().run(cassandraConnection), 30 seconds))
+    println(Await.result(PhantomLockManager.releaseLock("hello").run(cassandraConnection), 30 seconds))
+
   }
 }
