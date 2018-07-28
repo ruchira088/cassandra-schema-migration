@@ -1,0 +1,20 @@
+version: "3"
+
+services:
+
+  cassandra:
+    image: cassandra
+    ports:
+      - 9042:9042
+
+  cassandra-schema-migration:
+    build: .
+    ports:
+      - 5005:5005
+    volumes:
+      - "~/.sbt:/root/.sbt"
+      - "~/.ivy2:/root/.ivy2"
+      - ".:/opt/cassandra-schema-migration"
+      - "/opt/cassandra-schema-migration/target"
+      - "/opt/cassandra-schema-migration/project/target"
+      - "/root/.sbt/1.0/plugins"
