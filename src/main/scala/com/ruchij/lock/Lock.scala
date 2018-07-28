@@ -7,5 +7,5 @@ import org.joda.time.DateTime
 case class Lock(
     ownerId: UUID,
     lockedAt: DateTime,
-    keySpace: String
+    lockedKeySpace: String
 )

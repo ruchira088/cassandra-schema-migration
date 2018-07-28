@@ -9,5 +9,5 @@ trait PhantomLockTable extends Table[PhantomLockTable, Lock]
 
   object lockedAt extends DateTimeColumn
 
-  object keySpace extends StringColumn with PartitionKey
+  object lockedKeySpace extends StringColumn with PartitionKey
 }

@@ -5,7 +5,7 @@ import com.outworkers.phantom.database.Database
 import com.outworkers.phantom.dsl._
 import com.ruchij.migration.{Migration, MigrationDao}
 import com.ruchij.phantom.PhantomDao
-import scalaz.OptionT
+import scalaz.{OptionT, Reader}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -38,4 +38,10 @@ class PhantomMigrationDao(cassandraConnection: CassandraConnection)
       resultsSet <- migrationTable.create.ifNotExists().future()
     }
     yield migrationTable
+}
+
+object PhantomMigrationDao
+{
+  def reader: Reader[CassandraConnection, PhantomMigrationDao] =
+    Reader { new PhantomMigrationDao(_) }
 }

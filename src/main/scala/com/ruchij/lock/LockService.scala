@@ -6,14 +6,14 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait LockService
 {
-  def ownerId: UUID = LockService.LOCKER_OWNER_ID
+  def serviceId: UUID = LockService.SERVICE_ID
 
   def acquireLock(keySpaceName: String)(implicit executionContext: ExecutionContext): Future[Lock]
 
-  def releaseLock(keySpaceName: String, ownerId: UUID)(implicit executionContext: ExecutionContext): Future[Lock]
+  def releaseLock(keySpaceName: String)(implicit executionContext: ExecutionContext): Future[Lock]
 }
 
 object LockService
 {
-  val LOCKER_OWNER_ID: UUID = UUID.randomUUID()
+  val SERVICE_ID: UUID = UUID.randomUUID()
 }
