@@ -1,15 +1,13 @@
 package com.ruchij.lock
 
-import java.util.UUID
-
 import com.outworkers.phantom.connectors.CassandraConnection
 import com.outworkers.phantom.database.Database
 import com.outworkers.phantom.dsl._
 import com.ruchij.exceptions.{UnableToAcquireLockException, UnableToReleaseLockException, UnauthorizedLockReleaseException}
 import com.ruchij.phantom.PhantomDao
-import org.joda.time.DateTime
-import scalaz.Reader
 import com.ruchij.utils.ScalaUtils.{headFuture, predicate}
+import org.joda.time.DateTime
+import scalaz.{OptionT, Reader}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -39,11 +37,14 @@ class PhantomLockService(cassandraConnection: CassandraConnection)
     }
     yield lock
 
-  override def createTable()(implicit executionContext: ExecutionContext): Future[PhantomLockTable] =
-    for {
-      resultSet <- phantomLockTable.create.ifNotExists().future()
+  override def createTable()(implicit executionContext: ExecutionContext): OptionT[Future, PhantomLockTable] =
+    OptionT {
+      for {
+        resultSet <- phantomLockTable.create.ifNotExists().future()
+        result = if (resultSet.forall(_.wasApplied())) Some(phantomLockTable) else None
+      }
+      yield result
     }
-    yield phantomLockTable
 }
 
 object PhantomLockService

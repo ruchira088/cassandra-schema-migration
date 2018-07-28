@@ -7,5 +7,6 @@ case class Migration(
     name: String,
     updatedAt: DateTime,
     checkSum: String,
+    parsedCql: List[String],
     cqlScript: List[String]
 )

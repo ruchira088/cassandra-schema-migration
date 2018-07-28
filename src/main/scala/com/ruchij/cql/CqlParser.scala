@@ -46,9 +46,14 @@ object CqlParser
   def removeSingleLineComment(input: String): String =
     removeSingleLineComment(input, Constants.EMPTY_STRING)
 
+  def removeComments(input: List[String]): Option[List[String]] =
+    removeMultiLineComments(input)
+      .map(_.map(removeSingleLineComment))
+
   private def removeSingleLineComment(text: String, output: String): String =
     text.toList match {
       case '/' :: '/' :: _ => output
+      case '-' :: '-' :: _ => output
       case x :: xs => removeSingleLineComment(xs.mkString, output :+ x)
       case _ => output
     }

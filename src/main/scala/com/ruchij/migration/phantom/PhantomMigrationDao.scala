@@ -33,11 +33,14 @@ class PhantomMigrationDao(cassandraConnection: CassandraConnection)
   override def getAll()(implicit executionContext: ExecutionContext): Future[List[Migration]] =
     migrationTable.select.fetch()
 
-  override def createTable()(implicit executionContext: ExecutionContext): Future[PhantomMigrationTable] =
-    for {
-      resultsSet <- migrationTable.create.ifNotExists().future()
+  override def createTable()(implicit executionContext: ExecutionContext): OptionT[Future, PhantomMigrationTable] =
+    OptionT {
+      for {
+        resultsSet <- migrationTable.create.ifNotExists().future()
+        result = if (resultsSet.forall(_.wasApplied())) Some(migrationTable) else None
+      }
+      yield result
     }
-    yield migrationTable
 }
 
 object PhantomMigrationDao
