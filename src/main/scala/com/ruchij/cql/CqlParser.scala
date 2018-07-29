@@ -4,6 +4,17 @@ import com.ruchij.Constants
 
 object CqlParser
 {
+  type CqlStatement = String
+
+  def parse(input: List[String]): Option[List[CqlStatement]] =
+    removeComments(input).map {
+      _.mkString.split(";").toList.map(_ + ";")
+    }
+
+  def removeComments(input: List[String]): Option[List[String]] =
+    removeMultiLineComments(input)
+      .map(_.map(removeSingleLineComment))
+
   def removeMultiLineComments(input: List[String]): Option[List[String]] =
     removeMultiLineComments(input, List.empty, true)
 
@@ -45,10 +56,6 @@ object CqlParser
 
   def removeSingleLineComment(input: String): String =
     removeSingleLineComment(input, Constants.EMPTY_STRING)
-
-  def removeComments(input: List[String]): Option[List[String]] =
-    removeMultiLineComments(input)
-      .map(_.map(removeSingleLineComment))
 
   private def removeSingleLineComment(text: String, output: String): String =
     text.toList match {

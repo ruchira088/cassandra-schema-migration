@@ -14,7 +14,7 @@ trait PhantomMigrationTable extends Table[PhantomMigrationTable, Migration]
 
   object checkSum extends StringColumn
 
-  object parsedCql extends ListColumn[String]
+  object cqlStatements extends ListColumn[String]
 
   object cqlScript extends ListColumn[String]
 }

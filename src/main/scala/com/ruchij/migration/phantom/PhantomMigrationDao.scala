@@ -5,13 +5,15 @@ import com.outworkers.phantom.database.Database
 import com.outworkers.phantom.dsl._
 import com.ruchij.migration.{Migration, MigrationDao}
 import com.ruchij.phantom.PhantomDao
-import scalaz.{OptionT, Reader}
+import scalaz.OptionT
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class PhantomMigrationDao(cassandraConnection: CassandraConnection)
   extends Database[PhantomMigrationDao](cassandraConnection) with MigrationDao with PhantomDao[Migration, PhantomMigrationTable]
 {
+  override type InitializationResult = Option[PhantomMigrationTable]
+
   object migrationTable extends PhantomMigrationTable with Connector
 
   override def insert(migration: Migration)(implicit executionContext: ExecutionContext): Future[Migration] =
@@ -33,6 +35,9 @@ class PhantomMigrationDao(cassandraConnection: CassandraConnection)
   override def getAll()(implicit executionContext: ExecutionContext): Future[List[Migration]] =
     migrationTable.select.fetch()
 
+  override def init()(implicit executionContext: ExecutionContext): Future[Option[PhantomMigrationTable]] =
+    createTable().run
+
   override def createTable()(implicit executionContext: ExecutionContext): OptionT[Future, PhantomMigrationTable] =
     OptionT {
       for {
@@ -45,6 +50,6 @@ class PhantomMigrationDao(cassandraConnection: CassandraConnection)
 
 object PhantomMigrationDao
 {
-  def reader: Reader[CassandraConnection, PhantomMigrationDao] =
-    Reader { new PhantomMigrationDao(_) }
+  def apply(cassandraConnection: CassandraConnection): PhantomMigrationDao =
+    new PhantomMigrationDao(cassandraConnection)
 }

@@ -1,24 +1,31 @@
 package com.ruchij.migration
 
-import com.ruchij.cql.{CqlParser, CqlScript}
-import com.ruchij.utils.CheckSumGenerator
+import com.datastax.driver.core.ResultSet
+import com.ruchij.cql.CqlParser.CqlStatement
+import com.ruchij.cql.CqlScript
+import com.ruchij.utils.{CheckSumGenerator, ScalaUtils}
+import com.ruchij.utils.ScalaUtils.{tryPredicate, trySequence}
 import org.joda.time.DateTime
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 trait MigrationService
 {
   def applyLatest()(implicit executionContext: ExecutionContext)
 
   def dryRun()(implicit executionContext: ExecutionContext)
+
+  def apply(keyspaceLock: String, cqlScripts: CqlScript*)(implicit executionContext: ExecutionContext): Future[List[ResultSet]]
+
+  def executeCql(cql: CqlStatement)(implicit executionContext: ExecutionContext): Future[ResultSet]
 }
 
 object MigrationService
 {
-  def migration(cqlScript: CqlScript): Option[Migration] =
+  def migrationFromCqlScript(cqlScript: CqlScript): Try[Migration] =
     for {
-      parsedContents <- CqlParser.removeComments(cqlScript.contents)
-      checkSum <- CheckSumGenerator.generate(parsedContents.mkString, CheckSumGenerator.Md5).toOption
+      checkSum <- CheckSumGenerator.generate(cqlScript.cqlStatements.mkString, CheckSumGenerator.Md5)
     }
-    yield Migration(cqlScript.versionNumber, cqlScript.name, DateTime.now(), checkSum, parsedContents, cqlScript.contents)
+    yield Migration(cqlScript.versionNumber, cqlScript.name, DateTime.now(), checkSum, cqlScript.cqlStatements, cqlScript.contents)
 }
