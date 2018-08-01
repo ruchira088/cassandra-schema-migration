@@ -3,8 +3,7 @@ package com.ruchij.migration
 import com.datastax.driver.core.ResultSet
 import com.ruchij.cql.CqlParser.CqlStatement
 import com.ruchij.cql.CqlScript
-import com.ruchij.utils.{CheckSumGenerator, ScalaUtils}
-import com.ruchij.utils.ScalaUtils.{tryPredicate, trySequence}
+import com.ruchij.utils.CheckSumGenerator
 import org.joda.time.DateTime
 
 import scala.concurrent.{ExecutionContext, Future}

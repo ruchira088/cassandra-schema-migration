@@ -43,12 +43,8 @@ class CqlParserSpec extends FlatSpec with MustMatchers
       """.stripMargin
 
     removeMultiLineComments(textWithoutComments.splitIntoLines) mustBe Some(textWithoutComments.splitIntoLines)
-
-
     removeMultiLineComments(List("Hello World")) mustBe Some(List("Hello World"))
   }
-
-  it should ""
 
   "CqlParser.removeSingleLineComment(String)" should "return the string after the single line comment is removed" in {
 
@@ -56,5 +52,29 @@ class CqlParserSpec extends FlatSpec with MustMatchers
 
     removeSingleLineComment("Hello // World") mustBe "Hello "
     removeSingleLineComment("") mustBe ""
+  }
+
+  "CqlParser.parse(input: List[String])" should "return a list of parsed strings" in {
+
+    import com.ruchij.cql.CqlParser.parse
+
+    val input =
+      """
+        |Hello /* World
+        |// How */
+        |John;
+        |// Smith
+        |Foo Bar;
+        |Hello;
+        |How
+        | Are
+        | You ?
+      """.stripMargin.splitIntoLines
+
+    val expected = List("Hello John;", "Foo Bar;" , "Hello;", "How Are You ?;")
+
+    println(parse(input))
+
+    parse(input) mustBe Some(expected)
   }
 }

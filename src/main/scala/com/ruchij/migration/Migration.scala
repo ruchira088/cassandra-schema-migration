@@ -1,10 +1,9 @@
 package com.ruchij.migration
 
 import com.ruchij.cql.CqlParser.CqlStatement
+import com.ruchij.exceptions.MigrationMismatchException
 import com.ruchij.utils.ScalaUtils.{tryPredicate, trySequence}
 import org.joda.time.DateTime
-
-import scala.util.Try
 
 case class Migration(
     versionNumber: Int,
@@ -17,7 +16,7 @@ case class Migration(
 
 object Migration
 {
-  def isMatch(migrationOne: Migration, migrationTwo: Migration): Either[List[Throwable], _] =
+  def isMatch(migrationOne: Migration, migrationTwo: Migration): Either[MigrationMismatchException, _] =
     trySequence {
       List(
         tryPredicate(migrationOne.versionNumber == migrationTwo.versionNumber, ???),
@@ -25,4 +24,5 @@ object Migration
         tryPredicate(migrationOne.checkSum == migrationTwo.checkSum, ???)
       )
     }
+      .left.map(MigrationMismatchException)
 }

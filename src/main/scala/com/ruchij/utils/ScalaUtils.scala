@@ -1,6 +1,8 @@
 package com.ruchij.utils
 
-import scala.concurrent.{ExecutionContext, Future}
+import com.ruchij.exceptions.ThrowableCreator
+
+import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
 object ScalaUtils
@@ -14,7 +16,8 @@ object ScalaUtils
   def fromOption[A](option: Option[A], throwable: => Throwable): Future[A] =
     option.fold[Future[A]](Future.failed(throwable))(Future.successful)
 
-  def fromEither[A, B](either: Either[A, B]): Future[B] = ???
+  def fromEither[A, B](either: Either[A, B])(implicit throwableCreator: ThrowableCreator[A]): Future[B] =
+    either.fold[Future[B]](a => Future.failed(throwableCreator.throwable(a)), Future.successful)
 
   def trySequence[A](list: List[Try[A]]): Either[List[Throwable], List[A]] =
     list match {

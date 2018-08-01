@@ -8,7 +8,11 @@ object CqlParser
 
   def parse(input: List[String]): Option[List[CqlStatement]] =
     removeComments(input).map {
-      _.mkString.split(";").toList.map(_ + ";")
+      _.mkString.split(";").toList
+        .map(_.trim)
+        .collect {
+          case cqlStatement: CqlStatement if cqlStatement.nonEmpty => s"$cqlStatement;"
+        }
     }
 
   def removeComments(input: List[String]): Option[List[String]] =
