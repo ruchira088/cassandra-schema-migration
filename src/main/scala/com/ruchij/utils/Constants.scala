@@ -1,4 +1,4 @@
-package com.ruchij
+package com.ruchij.utils
 
 object Constants
 {

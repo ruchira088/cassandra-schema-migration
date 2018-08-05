@@ -1,6 +1,6 @@
 package com.ruchij.cql
 
-import com.ruchij.Constants
+import com.ruchij.utils.Constants
 
 object CqlParser
 {

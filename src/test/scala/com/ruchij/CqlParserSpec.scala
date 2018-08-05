@@ -73,8 +73,6 @@ class CqlParserSpec extends FlatSpec with MustMatchers
 
     val expected = List("Hello John;", "Foo Bar;" , "Hello;", "How Are You ?;")
 
-    println(parse(input))
-
     parse(input) mustBe Some(expected)
   }
 }

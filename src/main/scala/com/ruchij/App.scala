@@ -1,21 +1,22 @@
 package com.ruchij
 
-import com.outworkers.phantom.connectors.{CassandraConnection, ContactPoints}
+import com.outworkers.phantom.connectors.CassandraConnection
 import com.ruchij.cql.CqlScript
 import com.ruchij.lock.PhantomLockService
 import com.ruchij.migration.phantom.PhantomMigrationDao
 import com.ruchij.migration.{MigrationService, MigrationServiceImpl}
+import com.ruchij.utils.config.CassandraConfiguration
 
 import scala.concurrent.Await
-import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
 import scala.language.postfixOps
 
 object App
 {
   def main(args: Array[String]): Unit =
   {
-    val cassandraConnection: CassandraConnection = ContactPoints(List("localhost")).keySpace("migrations")
+    val cassandraConnection: CassandraConnection = CassandraConfiguration.cassandraConnection()
 
     val migrationDao: PhantomMigrationDao = PhantomMigrationDao(cassandraConnection)
     val lockService: PhantomLockService = PhantomLockService(cassandraConnection)
