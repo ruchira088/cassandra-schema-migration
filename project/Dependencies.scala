@@ -19,5 +19,7 @@ object Dependencies
   lazy val dockerTestKitSpotify = "com.whisk" %% "docker-testkit-impl-spotify" % DOCKER_TEST_KIT_VERSION
   lazy val dockerTestKitConfig = "com.whisk" %% "docker-testkit-config" % DOCKER_TEST_KIT_VERSION
 
+  lazy val faker = "com.github.javafaker" % "javafaker" % "0.15"
+
   lazy val pegdown = "org.pegdown" % "pegdown" % "1.6.0"
 }

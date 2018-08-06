@@ -21,8 +21,10 @@ lazy val root =
           typesafeConfig
         ) ++
           List(
-            scalaTest, pegdown,
-            dockerTestKitScalaTest, dockerTestKitSpotify, dockerTestKitConfig
+            scalaTest,
+            pegdown,
+            dockerTestKitScalaTest, dockerTestKitSpotify, dockerTestKitConfig,
+            faker
           ).map(_ % s"${Test.name}, ${It.name}"),
       buildInfoKeys := BuildInfoKey.ofN(name, scalaVersion, sbtVersion),
       buildInfoPackage := "com.eed3si9n.ruchij",
@@ -35,4 +37,4 @@ lazy val root =
         Tests.Argument(TestFrameworks.ScalaTest, "-h", "target/test-results")
     )
 
-addCommandAlias("testWithCoverage", "; clean; coverage; test; coverageReport")
+addCommandAlias("testWithCoverage", "; clean; coverage; test; it:test; coverageReport")

@@ -1,7 +1,6 @@
 package com.ruchij.lock
 
-import java.util.UUID
-
+import com.ruchij.RandomGenerator
 import com.ruchij.docker.DockerCassandra
 import org.scalatest.{AsyncFlatSpec, MustMatchers}
 
@@ -13,13 +12,13 @@ class PhantomLockServiceSpec extends AsyncFlatSpec with DockerCassandra with Mus
 
     val phantomLockService = PhantomLockService(cassandraConnection())
 
-    val randomKeyspace = UUID.randomUUID().toString
+    val randomKeyspace = RandomGenerator.keySpace()
 
     for {
       _ <- phantomLockService.init()
       lock <- phantomLockService.acquireLock(randomKeyspace)
       _ = println(lock)
-      _ <- phantomLockService.acquireLock(randomKeyspace)
+//      _ <- phantomLockService.acquireLock(randomKeyspace)
     }
     yield 1 mustBe 1
   }
