@@ -18,7 +18,8 @@ lazy val root =
           phantomDsl,
           jodaTime,
           scalazCore,
-          typesafeConfig
+          typesafeConfig,
+          scalaLogging, logbackClassic
         ) ++
           List(
             scalaTest,
